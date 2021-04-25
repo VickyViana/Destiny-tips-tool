@@ -6,6 +6,10 @@ import re
 from sqlalchemy import create_engine
 import requests
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 
 
 # Constants
@@ -44,13 +48,18 @@ def get_web(driver, web):  # To open requested web in driver browser
     return web_activation
 
 
-def find_by_class(driver, element_class):
+def find_by_class(driver, element_class):  # Find an element in html code by class name
     element = driver.find_element_by_class_name(element_class)
     return element
 
 
-def find_by_tag(table, tag):
+def find_by_tag(table, tag):  # Find an element in html code by tag name
     element = table.find_elements_by_tag_name(tag)
+    return element
+
+
+def find_by_id(driver, id_data):  # Find an element in html code by id
+    element = driver.find_element_by_id(id_data)
     return element
 
 
@@ -64,6 +73,10 @@ def select_dropdown(driver, name_menu, name_search):  # To select an option in a
     selection = driver.find_element_by_xpath("//select[@name=name_menu]/option[text()=name_search]").click()
     return selection
 
+
+def fill_box(driver, text):
+    filler = driver.send_keys(text)
+    return filler
 
 '''
 Function to order the data as we need and fill the empty data with 0. 
@@ -101,7 +114,31 @@ def reorder_func(day_weather_list):
     return reordered_weather
 
 
-def get_weather(web, country_name, airport_name, weather_cols):  # Can get weather information from an airport
+def get_flight_info(route, web, flight_code):
+    driver = get_driver(route)
+    get_web(driver, web)
+    click_button(driver, "btn.btn-blue")
+    flight_box = find_by_id(driver, 'searchFlight')
+    fill_box(flight_box, flight_code)
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "tt-dataset-aircraftList")))
+    flight_selection = find_by_class(driver, 'tt-dataset-aircraftList')
+    flight_selection.click()
+    table = driver.find_element_by_css_selector('tbody')
+    rows = table.find_elements_by_class_name('data-row')
+    flight_raw = []
+    for row in rows:
+        cells = row.find_elements_by_tag_name('td')
+        for cell in cells:
+            flight_raw.append(str(cell.text))
+    return flight_raw
+
+
+def get_airports_info(path_airports):
+    airports_df = get_df_from_csv(path_airports)
+    return airports_df
+
+
+def get_weather_df(route, web, country_name, airport_name, weather_cols):  # Can get weather information from an airport
     driver = get_driver(route)
     get_web(driver, web)
     click_button(driver, "btn.btn-primary.btn-sm.acceptcookies")
@@ -122,8 +159,3 @@ def get_weather(web, country_name, airport_name, weather_cols):  # Can get weath
         ordered_weather.append(sublist)
     weather_df = pd.DataFrame(ordered_weather, columns=weather_cols)
     return weather_df
-
-
-
-
-

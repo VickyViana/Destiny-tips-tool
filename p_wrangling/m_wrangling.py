@@ -6,23 +6,53 @@ import re
 # FUNCTIONS
 
 
+def date_short(day, month, year):
+    short_month = month[0:3]
+    date_format = f'{day} {short_month} {year}'
+    return date_format
+
+
+def make_sublist(list_raw, n_components):  # Divide a list in a list of lists of n components
+    list_of_lists = [list_raw[x:x + n_components] for x in range(0, len(list_raw), n_components)]
+    return list_of_lists
+
+
+def get_df(list_of_lists, cols):  # Return a dataframe from a list of lists given
+    df_raw = pd.DataFrame(list_of_lists, columns=cols)
+    return df_raw
+
+
+def split_column(data_df, init_col, sep, first_col, sec_col):  # Split a column in two by a separator, and add the new columns to the dataframe
+    data_df[[first_col, sec_col]] = data_df[init_col].str.split(sep, expand=True)
+    return data_df
+
+
+def split_n(flight_list):  # Splits each element of a list by separator \n
+    flight_list_clean = [x.split('\n') for x in flight_list]
+    return flight_list_clean
+
+
+def strip_str_col(data_df, column, to_remove):  # Clean elements of a column removing characters from the right
+    data_df[column] = data_df[column].map(lambda x: x.rstrip(to_remove))
+    return data_df
+
+
 def get_code(table_df, row, column):
     code_data = table_df.loc[row, column]
     return code_data
 
 
-def get_city_df(table_df, column, data_code):
-    city_df = table_df.loc[table_df[column] == data_code]
-    return city_df
+def get_row(table_df, column, data_code):
+    row_wanted = table_df.loc[table_df[column] == data_code]
+    return row_wanted
 
 
 def get_destiny(flight_df, airports_df):  # Returns the variables city_name and country_name from the flight info
     city_code = get_code(flight_df,'iataCode','arrival')
-    city_df = get_city_df(airports_df, 'iata_code', city_code)
+    city_df = get_row(airports_df, 'iata_code', city_code)
     city_name = get_code(city_df, city_df.index[0], 'municipality')
     country_name = get_code(city_df, city_df.index[0], 'country_name')
-    destiny = f'You are travelling to {city_name}, in {country_name}'
-    return destiny, city_name, country_name
+    return city_name, country_name
 
 
 def not_day(text):  # Return a string deleting the last word
@@ -34,9 +64,16 @@ def only_num(text):  # Return ony the numbers in a string
     result = (re.findall('\d+', text))
     return ''.join(result)
 
+
+def remove_empties(flight_list):
+    flight_list_clean = [x for x in flight_list if x != ['']]
+    return flight_list_clean
+
+
 def apply_in_column(table_df, column, fun_to_apply):  # Apply a function to a dataframe column
     table_df[column] = table_df[column].apply(fun_to_apply)
     return table_df[column]
+
 
 def clean_weather(weather_df):  # To clean weather_df columns, to have more useful values
     weather_df['Forecast'] = apply_in_column(weather_df, 'Forecast', not_day)
@@ -46,10 +83,44 @@ def clean_weather(weather_df):  # To clean weather_df columns, to have more usef
     weather_df['Barometric pressure (mb)'] = apply_in_column(weather_df, 'Barometric pressure (mb)', only_num)
     return weather_df
 
+
 def weather_info(weather_df):
+    # Function to get the forecast info of the day: Forecast, High temperature, Low temperature and rain probability
     forecast = get_code(weather_df, weather_df.index[0], 'Forecast')
-    hight_temp = get_code(weather_df, weather_df.index[0], 'High temperature (ºC)')
+    high_temp = get_code(weather_df, weather_df.index[0], 'High temperature (ºC)')
     low_temp = get_code(weather_df, weather_df.index[0], 'Low temperature (ºC)')
     prob_precipitation = get_code(weather_df, weather_df.index[0], 'Probability of precipitation (%)')
-    return forecast, hight_temp, low_temp, prob_precipitation
+    return forecast, high_temp, low_temp, prob_precipitation
+
+
+def get_flights_df_m1(flight_list, flight_cols):  # Return a dataframe with the information of all flights requested
+    flight_df_raw = get_df(flight_list)
+    flight_df_raw1 = split_column(flight_df_raw, 3, '(', 'Departure city', 'Departure code')
+    flight_df_raw2 = split_column(flight_df_raw1, 4, '(', 'Arrival city', 'Arrival code')
+    flight_df_raw3 = strip_str_col(flight_df_raw2, 'Departure code', ')')
+    flight_df_raw4 = strip_str_col(flight_df_raw3, 'Arrival code', ')')
+    flight_df_clean = flight_df_raw4[[2, 'Departure city', 'Departure code', 'Arrival city', 'Arrival code',5, 6, 7, 8, 9, 11]]
+    flights_df = flight_df_clean.columns(flight_cols)
+    return flights_df
+
+
+def get_flights_df_m2(flight_list, flight_cols2, flight_cols_final):  # Return a dataframe with the information of all flights requested
+    flight_list_split = split_n(flight_list)
+    flight_list_clean = remove_empties(flight_list_split)
+    flight_df_raw = get_df(flight_list_clean, flight_cols2)
+    flight_df_raw1 = split_column(flight_df_raw, 'Departure', '(', 'Departure city', 'Departure code')
+    flight_df_raw2 = split_column(flight_df_raw1, 'Arrival', '(', 'Arrival city', 'Arrival code')
+    flight_df_raw3 = strip_str_col(flight_df_raw2, 'Departure code', ')')
+    flight_df_raw4 = strip_str_col(flight_df_raw3, 'Arrival code', ')')
+    flights_df = flight_df_raw4[flight_cols_final]
+    return flights_df
+
+
+
+
+
+
+
+
+
 
