@@ -69,6 +69,12 @@ def click_button(driver, element_class):  # To click a selected button
     return clicker
 
 
+def click_button_xpath(driver, xpath):  # To click a selected button
+    button = driver.find_element_by_xpath(xpath)
+    clicker = driver.execute_script("arguments[0].click();", button)
+    return clicker
+
+
 def select_dropdown(driver, name_menu, name_search):  # To select an option in a drop-down menu
     selection = driver.find_element_by_xpath("//select[@name=name_menu]/option[text()=name_search]").click()
     return selection
@@ -77,6 +83,12 @@ def select_dropdown(driver, name_menu, name_search):  # To select an option in a
 def fill_box(driver, text):
     filler = driver.send_keys(text)
     return filler
+
+
+def click_enter(driver):
+    click = driver.send_keys(Keys.ENTER)
+    return click
+
 
 '''
 Function to order the data as we need and fill the empty data with 0. 
@@ -123,6 +135,7 @@ def get_flight_info(route, web, flight_code):
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "tt-dataset-aircraftList")))
     flight_selection = find_by_class(driver, 'tt-dataset-aircraftList')
     flight_selection.click()
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'tbody')))
     table = driver.find_element_by_css_selector('tbody')
     rows = table.find_elements_by_class_name('data-row')
     flight_raw = []
@@ -159,3 +172,21 @@ def get_weather_df(route, web, country_name, airport_name, weather_cols):  # Can
         ordered_weather.append(sublist)
     weather_df = pd.DataFrame(ordered_weather, columns=weather_cols)
     return weather_df
+
+
+def get_currency_change(route, web, departure_curr_code, arrival_curr_code):  # Returns currency info
+    driver = get_driver(route)
+    get_web(driver, web)
+    click_button_xpath(driver, "//button[@class='button__BaseButton-sc-1qpsalo-0 ctapkr']")
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "midmarketFromCurrency")))
+    first_box = find_by_id(driver, 'midmarketFromCurrency')
+    fill_box(first_box, departure_curr_code)
+    click_enter(first_box)
+    second_box = find_by_id(driver, 'midmarketToCurrency')
+    fill_box(second_box, arrival_curr_code)
+    click_enter(second_box)
+    click_button_xpath(driver, "//button[@type='submit']")
+    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "unit-rates___StyledDiv-sc-1dk593y-0.dEqdnx")))
+    rule = find_by_class(driver, "unit-rates___StyledDiv-sc-1dk593y-0.dEqdnx")
+    return rule.text
+

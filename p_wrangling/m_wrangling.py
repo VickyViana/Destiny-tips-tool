@@ -2,11 +2,12 @@
 
 import pandas as pd
 import re
+from p_acquisition.m_acquisition import *
 
 # FUNCTIONS
 
 
-def date_short(day, month, year):
+def date_short(day, month, year):  # To put input date in useful format (text)
     short_month = month[0:3]
     date_format = f'{day} {short_month} {year}'
     return date_format
@@ -45,6 +46,11 @@ def get_code(table_df, row, column):
 def get_row(table_df, column, data_code):
     row_wanted = table_df.loc[table_df[column] == data_code]
     return row_wanted
+
+
+def get_value(data_serie, column):
+    code = data_serie[column].values[0]
+    return code
 
 
 def get_destiny(flight_df, airports_df):  # Returns the variables city_name and country_name from the flight info
@@ -114,6 +120,17 @@ def get_flights_df_m2(flight_list, flight_cols2, flight_cols_final):  # Return a
     flight_df_raw4 = strip_str_col(flight_df_raw3, 'Arrival code', ')')
     flights_df = flight_df_raw4[flight_cols_final]
     return flights_df
+
+
+def currency_info(currency_table_route, departure_country, arrival_country):  # Returns currency info
+    currency_df = get_df_from_csv(currency_table_route)
+    departure_curr_df = get_row(currency_df, 'ENTITY', departure_country)
+    departure_curr_code = get_value(departure_curr_df, 'Alphabetic Code')
+    arrival_curr_df = get_row(currency_df, 'ENTITY', arrival_country)
+    arrival_curr_code = get_value(arrival_curr_df, 'Alphabetic Code')
+    arrival_curr_name = get_value(arrival_curr_df, 'Currency')
+    return departure_curr_code, arrival_curr_code, arrival_curr_name
+
 
 
 
