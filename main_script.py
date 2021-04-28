@@ -64,10 +64,6 @@ def main(argument1, argument2, argument3, argument4):
     rule = get_currency_change(driver_route, currency_web, departure_curr_code, arrival_curr_code)
 
 
-
-    # city_name, country_name = get_destiny(flight_df, airports_df)
-    #
-
     print(print_destiny(arrival_city, arrival_country))
     print(print_currency(departure_curr_code, arrival_curr_code, arrival_city, departure_country, arrival_country,
                          arrival_curr_name, rule))

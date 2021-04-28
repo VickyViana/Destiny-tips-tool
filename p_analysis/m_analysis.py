@@ -21,6 +21,7 @@ def get_imp_flight_values(flight_info):
 def get_imp_airports_values(arrival_airport_df, departure_airport_df):
     arrival_country = get_value(arrival_airport_df, 'country_name')
     departure_country = get_value(departure_airport_df, 'country_name')
+
     return departure_country, arrival_country
 
 
