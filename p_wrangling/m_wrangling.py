@@ -3,6 +3,7 @@
 import pandas as pd
 import re
 from p_acquisition.m_acquisition import *
+from datetime import datetime
 
 # FUNCTIONS
 
@@ -81,6 +82,11 @@ def apply_in_column(table_df, column, fun_to_apply):  # Apply a function to a da
     return table_df[column]
 
 
+def transform_hour(hour):
+    hour_trf = datetime.strptime(hour, "%m/%d/%Y %I:%M %p")
+    return hour_trf
+
+
 def clean_weather(weather_df):  # To clean weather_df columns, to have more useful values
     weather_df['Forecast'] = apply_in_column(weather_df, 'Forecast', not_day)
     weather_df['High temperature (ºC)'] = apply_in_column(weather_df, 'High temperature (ºC)', only_num)
@@ -130,6 +136,14 @@ def currency_info(currency_table_route, departure_country, arrival_country):  # 
     arrival_curr_code = get_value(arrival_curr_df, 'Alphabetic Code')
     arrival_curr_name = get_value(arrival_curr_df, 'Currency')
     return departure_curr_code, arrival_curr_code, arrival_curr_name
+
+
+def hour_diff_calculate(arrival_h,departure_h):
+    departure_hour = transform_hour(departure_h)
+    arrival_hour = transform_hour(arrival_h)
+    hour_diff = departure_hour - arrival_hour
+    return hour_diff
+
 
 
 

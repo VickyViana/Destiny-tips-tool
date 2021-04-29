@@ -21,8 +21,10 @@ def get_imp_flight_values(flight_info):
 def get_imp_airports_values(arrival_airport_df, departure_airport_df):
     arrival_country = get_value(arrival_airport_df, 'country_name')
     departure_country = get_value(departure_airport_df, 'country_name')
+    arrival_country_tz = get_value(arrival_airport_df, 'Tz database time zone')
+    departure_country_tz = get_value(departure_airport_df, 'Tz database time zone')
 
-    return departure_country, arrival_country
+    return departure_country, arrival_country, arrival_country_tz, departure_country_tz
 
 
 def get_airports_dfs(airports_df, departure_code, arrival_code):
@@ -68,6 +70,12 @@ def print_currency(departure_curr_code, arrival_curr_code, arrival_city, departu
         curr_rule = f"Don't forget that {rule}"
         return curr_solution3, curr_rule
 
+
+def print_hour_diff(hour_diff):
+    if hour_diff == 0:
+        return 'There are no time difference'
+    else:
+        return f'There is a time difference of {hour_diff}'
 
 
 

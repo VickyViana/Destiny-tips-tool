@@ -14,7 +14,7 @@ forecast_web ='https://www.weatherwx.com/forecast.php?config=&forecast=pass&pass
 driver_route = '/home/viki/Bootcamp/drivers/chromedriver'
 weather_web = 'https://www.weatherwx.com/forecast.php?config=&forecast=pass&pass=tafINT'
 currency_web = 'https://www.xe.com/es/currencyconverter/'
-path_airports = 'data/world-airports.csv'
+path_airports = 'data/world-airports-extended.csv'
 flight_cols = ['Date', 'Departure city', 'Departure code', 'Arrival city', 'Arrival code', 'Aircraft', 'Flight Time',
                'Scheduled Time Departure', 'Actual Time Departure', 'Scheduled Time Arrival', 'Status']
 weather_cols = ['Forecast', 'High temperature (ºC)', 'Low temperature (ºC)',
@@ -22,6 +22,7 @@ weather_cols = ['Forecast', 'High temperature (ºC)', 'Low temperature (ºC)',
 flight_cols2 = ['Aircraft', 'Date', 'Flight Time', 'Status', 'STD', 'Scheduled Time Departure', 'ATD',
               'Actual Time Departure', 'STA', 'Scheduled Time Arrival', 'FROM', 'Departure', 'To', 'Arrival']
 currency_table_route = 'data/currency_table.csv'
+hour_web = 'https://www.prokerala.com/travel/timezones/time-converter.php'
 
 # FUNCTIONS
 
@@ -54,7 +55,8 @@ def main(argument1, argument2, argument3, argument4):
     arrival_city, departure_code, arrival_code = get_imp_flight_values(flight)
     airports_df = get_df_from_csv(path_airports)
     departure_airport_df, arrival_airport_df = get_airports_dfs(airports_df, departure_code, arrival_code)
-    departure_country, arrival_country = get_imp_airports_values(arrival_airport_df, departure_airport_df)
+    departure_country, arrival_country, arrival_country_tz, departure_country_tz = get_imp_airports_values(arrival_airport_df, departure_airport_df)
+    print(departure_country)
 
     # weather_df = get_weather_df(weather_web, arrival_country, airport_name, weather_cols)
 
@@ -62,11 +64,13 @@ def main(argument1, argument2, argument3, argument4):
     departure_curr_code, arrival_curr_code, arrival_curr_name = currency_info(currency_table_route, departure_country,
                                                                               arrival_country)
     rule = get_currency_change(driver_route, currency_web, departure_curr_code, arrival_curr_code)
-
+    departure_h, arrival_h = get_tz_dif(driver_route, hour_web, departure_country_tz, arrival_country_tz)
+    hour_diff = hour_diff_calculate(arrival_h, departure_h)
 
     print(print_destiny(arrival_city, arrival_country))
     print(print_currency(departure_curr_code, arrival_curr_code, arrival_city, departure_country, arrival_country,
                          arrival_curr_name, rule))
+    print(print_hour_diff(hour_diff))
     #print(print_weather)
 
 

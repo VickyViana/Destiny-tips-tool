@@ -190,3 +190,19 @@ def get_currency_change(route, web, departure_curr_code, arrival_curr_code):  # 
     rule = find_by_class(driver, "unit-rates___StyledDiv-sc-1dk593y-0.dEqdnx")
     return rule.text
 
+def get_tz_dif(route, web, departure_timezone, arrival_timezone):
+    driver = get_driver(route)
+    get_web(driver, web)
+    departure_box = find_by_id(driver, 'loc1')
+    departure_box.clear()
+    fill_box(departure_box, departure_timezone)
+    arrival_box = find_by_id(driver, 'loc2')
+    fill_box(arrival_box, arrival_timezone)
+    click_enter(arrival_box)
+    departure_hour = find_by_id(driver, 'time1')
+    departure_h = departure_hour.get_attribute('value')
+    arrival_hour = find_by_id(driver, 'time2')
+    arrival_h = arrival_hour.get_attribute('value')
+    return departure_h, arrival_h
+
+
