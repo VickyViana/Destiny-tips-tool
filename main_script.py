@@ -55,14 +55,14 @@ def main(argument1, argument2, argument3, argument4):
     arrival_city, departure_code, arrival_code = get_imp_flight_values(flight)
     airports_df = get_df_from_csv(path_airports)
     departure_airport_df, arrival_airport_df = get_airports_dfs(airports_df, departure_code, arrival_code)
-    departure_country, arrival_country, arrival_country_tz, departure_country_tz = get_imp_airports_values(arrival_airport_df, departure_airport_df)
-    print(departure_country)
+    departure_country, arrival_country, arrival_country_tz, departure_country_tz, arrival_curr_code, \
+           departure_curr_code, arrival_curr_name, departure_curr_name = get_imp_airports_values(arrival_airport_df,
+                                                                                                 departure_airport_df)
 
     # weather_df = get_weather_df(weather_web, arrival_country, airport_name, weather_cols)
 
     # flight_df = get_flight_info_df(aed_flight, argument1)
-    departure_curr_code, arrival_curr_code, arrival_curr_name = currency_info(currency_table_route, departure_country,
-                                                                              arrival_country)
+
     rule = get_currency_change(driver_route, currency_web, departure_curr_code, arrival_curr_code)
     departure_h, arrival_h = get_tz_dif(driver_route, hour_web, departure_country_tz, arrival_country_tz)
     hour_diff = hour_diff_calculate(arrival_h, departure_h)

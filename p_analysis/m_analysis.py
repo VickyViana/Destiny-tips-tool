@@ -23,8 +23,12 @@ def get_imp_airports_values(arrival_airport_df, departure_airport_df):
     departure_country = get_value(departure_airport_df, 'country_name')
     arrival_country_tz = get_value(arrival_airport_df, 'Tz database time zone')
     departure_country_tz = get_value(departure_airport_df, 'Tz database time zone')
-
-    return departure_country, arrival_country, arrival_country_tz, departure_country_tz
+    arrival_curr_code = get_value(arrival_airport_df, 'ISO4217-currency_alphabetic_code')
+    departure_curr_code = get_value(departure_airport_df, 'ISO4217-currency_alphabetic_code')
+    arrival_curr_name = get_value(arrival_airport_df, 'ISO4217-currency_name')
+    departure_curr_name = get_value(departure_airport_df, 'ISO4217-currency_name')
+    return departure_country, arrival_country, arrival_country_tz, departure_country_tz, arrival_curr_code, \
+           departure_curr_code, arrival_curr_name, departure_curr_name
 
 
 def get_airports_dfs(airports_df, departure_code, arrival_code):
@@ -66,16 +70,15 @@ def print_currency(departure_curr_code, arrival_curr_code, arrival_city, departu
             curr_solution2 = f'In {departure_country} and {arrival_country} is used the same currency, the {arrival_curr_name}'
             return curr_solution2
     else:
-        curr_solution3 = f'The currency in {arrival_country} is {arrival_curr_name}'
-        curr_rule = f"Don't forget that {rule}"
-        return curr_solution3, curr_rule
+        curr_solution3 = f"The currency in {arrival_country} is {arrival_curr_name}. Don't forget that {rule}"
+        return curr_solution3
 
 
 def print_hour_diff(hour_diff):
     if hour_diff == 0:
         return 'There are no time difference'
     else:
-        return f'There is a time difference of {hour_diff}'
+        return f'There is a time difference of {hour_diff} hours'
 
 
 

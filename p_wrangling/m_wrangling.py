@@ -141,7 +141,8 @@ def currency_info(currency_table_route, departure_country, arrival_country):  # 
 def hour_diff_calculate(arrival_h,departure_h):
     departure_hour = transform_hour(departure_h)
     arrival_hour = transform_hour(arrival_h)
-    hour_diff = departure_hour - arrival_hour
+    difference = departure_hour - arrival_hour
+    hour_diff = difference.total_seconds() / 60**2
     return hour_diff
 
 
