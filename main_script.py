@@ -1,5 +1,6 @@
 # IMPORTS
 
+import streamlit as st
 import pandas as pd
 import argparse
 from p_acquisition.m_acquisition import *
@@ -56,8 +57,8 @@ def main(argument1, argument2, argument3, argument4):
     airports_df = get_df_from_csv(path_airports)
     departure_airport_df, arrival_airport_df = get_airports_dfs(airports_df, departure_code, arrival_code)
     departure_country, arrival_country, arrival_country_tz, departure_country_tz, arrival_curr_code, \
-           departure_curr_code, arrival_curr_name, departure_curr_name = get_imp_airports_values(arrival_airport_df,
-                                                                                                 departure_airport_df)
+           departure_curr_code, arrival_curr_name, departure_curr_name, arrival_country_code = \
+        get_imp_airports_values(arrival_airport_df, departure_airport_df)
 
     # weather_df = get_weather_df(weather_web, arrival_country, airport_name, weather_cols)
 
@@ -66,13 +67,18 @@ def main(argument1, argument2, argument3, argument4):
     rule = get_currency_change(driver_route, currency_web, departure_curr_code, arrival_curr_code)
     departure_h, arrival_h = get_tz_dif(driver_route, hour_web, departure_country_tz, arrival_country_tz)
     hour_diff = hour_diff_calculate(arrival_h, departure_h)
+    weather_df = get_api_weather(arrival_city, arrival_country_code)
+    temp, max_temp, min_temp, rain, snow, humidity, clouds = weather_info(date, weather_df)
+
+
 
     print(print_destiny(arrival_city, arrival_country))
     print(print_currency(departure_curr_code, arrival_curr_code, arrival_city, departure_country, arrival_country,
                          arrival_curr_name, rule))
     print(print_hour_diff(hour_diff))
-    #print(print_weather)
+    print(print_weather(temp, max_temp, min_temp, rain, snow, humidity, clouds))
 
 
 if __name__ == '__main__':
+
     main(argument_parser().flight_code, argument_parser().day, argument_parser().month, argument_parser().year)

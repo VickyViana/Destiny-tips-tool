@@ -27,8 +27,9 @@ def get_imp_airports_values(arrival_airport_df, departure_airport_df):
     departure_curr_code = get_value(departure_airport_df, 'ISO4217-currency_alphabetic_code')
     arrival_curr_name = get_value(arrival_airport_df, 'ISO4217-currency_name')
     departure_curr_name = get_value(departure_airport_df, 'ISO4217-currency_name')
+    arrival_country_code = get_value(arrival_airport_df, 'iso_country')
     return departure_country, arrival_country, arrival_country_tz, departure_country_tz, arrival_curr_code, \
-           departure_curr_code, arrival_curr_name, departure_curr_name
+           departure_curr_code, arrival_curr_name, departure_curr_name, arrival_country_code
 
 
 def get_airports_dfs(airports_df, departure_code, arrival_code):
@@ -81,4 +82,24 @@ def print_hour_diff(hour_diff):
         return f'There is a time difference of {hour_diff} hours'
 
 
+def print_weather(temp, max_temp, min_temp, rain, snow, humidity, clouds):
+    temperatures = f'There will be an average temperature of {temp} ºC, with {max_temp} ºC of maximum and {min_temp} ºC of minimum.'
+    humid = f'There will be a humidity of {humidity}%.'
+    if clouds < 20:
+        clouding = f'It will be a cloudless day.'
+    elif clouds > 20 & clouds < 70:
+        clouding = f'It will be partly cloudy.'
+    elif clouds >= 70:
+        clouding = f'It will be very cloudy.'
+    if rain == 0:
+        raining = f"It won't rain."
+    elif rain >0 & rain <= 60:
+        raining = f"There is a {rain}% probability of rain."
+    elif rain > 60:
+        raining = f"There is a {rain}% probability of rain. Don't forget your umbrella."
+    if snow != 0:
+        snowing = f'It will snow.'
+    else:
+        snowing = ''
+    return f'{temperatures} {clouding} {raining} {snowing} {humid}'
 

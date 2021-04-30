@@ -206,3 +206,9 @@ def get_tz_dif(route, web, departure_timezone, arrival_timezone):
     return departure_h, arrival_h
 
 
+def get_api_weather(arrival_city, arrival_country_code):
+    url = f'https://api.weatherbit.io/v2.0/forecast/daily?city={arrival_city}&country={arrival_country_code}&key=b16cc265f9b44f2f8f02e7e2e4c10e89'
+    html_weather = requests.get(url).json()
+    html_dic = html_weather['data']
+    weather_df = pd.DataFrame(html_dic)
+    return weather_df

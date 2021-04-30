@@ -4,6 +4,7 @@ import pandas as pd
 import re
 from p_acquisition.m_acquisition import *
 from datetime import datetime
+from datetime import date
 
 # FUNCTIONS
 
@@ -12,6 +13,12 @@ def date_short(day, month, year):  # To put input date in useful format (text)
     short_month = month[0:3]
     date_format = f'{day} {short_month} {year}'
     return date_format
+
+
+def date_for_weather(date): # Puts the date in format readable by weather_df
+    date_changed = datetime.strptime(date, "%d %b %Y")
+    weather_date = date(date_changed).isoformat()
+    return weather_date
 
 
 def make_sublist(list_raw, n_components):  # Divide a list in a list of lists of n components
@@ -145,6 +152,17 @@ def hour_diff_calculate(arrival_h,departure_h):
     hour_diff = difference.total_seconds() / 60**2
     return hour_diff
 
+def weather_info(date, weather_df):  # Collect weather info of the flight date in arrival city
+    date_weather = date_for_weather(date)
+    weather_day_df = get_row(weather_df, 'datetime', date_weather)
+    temp = get_value(weather_day_df, 'temp')
+    max_temp = get_value(weather_day_df, 'max_temp')
+    min_temp = get_value(weather_day_df, 'min_temp')
+    rain = get_value(weather_day_df, 'pop')
+    snow = get_value(weather_day_df, 'snow')
+    humidity = get_value(weather_day_df, 'rh')
+    clouds = get_value(weather_day_df, 'clouds')
+    return temp, max_temp, min_temp, rain, snow, humidity, clouds
 
 
 
