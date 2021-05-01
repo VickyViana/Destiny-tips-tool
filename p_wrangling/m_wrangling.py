@@ -15,9 +15,9 @@ def date_short(day, month, year):  # To put input date in useful format (text)
     return date_format
 
 
-def date_for_weather(date): # Puts the date in format readable by weather_df
-    date_changed = datetime.strptime(date, "%d %b %Y")
-    weather_date = date(date_changed).isoformat()
+def date_for_weather(date):  # Puts the date in format readable by weather_df
+    date_changed = datetime.strptime(date, "%d %b %Y").isoformat()
+    weather_date = date_changed[:10]
     return weather_date
 
 
