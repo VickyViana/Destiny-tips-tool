@@ -39,7 +39,7 @@ def get_airports_dfs(airports_df, departure_code, arrival_code):
 
 
 def print_destiny(city_name, country_name):
-    destiny = f'You are travelling to {city_name}, in {country_name}'
+    destiny = f'You are travelling to {city_name}, in {country_name}.'
     return destiny
 
 
@@ -68,18 +68,18 @@ def print_currency(departure_curr_code, arrival_curr_code, arrival_city, departu
             curr_solution1 = f"{arrival_city} is also in {departure_country}, thus the {arrival_curr_name} is used. You won't need to change!"
             return curr_solution1
         else:
-            curr_solution2 = f'In {departure_country} and {arrival_country} is used the same currency, the {arrival_curr_name}'
+            curr_solution2 = f'In {departure_country} and {arrival_country} is used the same currency, the {arrival_curr_name}.'
             return curr_solution2
     else:
-        curr_solution3 = f"The currency in {arrival_country} is {arrival_curr_name}. Don't forget that {rule}"
+        curr_solution3 = f"The currency in {arrival_country} is the {arrival_curr_name}. Don't forget that {rule}."
         return curr_solution3
 
 
 def print_hour_diff(hour_diff):
     if hour_diff == 0:
-        return 'There are no time difference'
+        return 'There is no time difference.'
     else:
-        return f'There is a time difference of {hour_diff} hours'
+        return f'There is a time difference of {hour_diff} hours.'
 
 
 def print_weather(temp, max_temp, min_temp, rain, snow, humidity, clouds):
