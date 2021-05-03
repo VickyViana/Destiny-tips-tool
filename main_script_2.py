@@ -45,7 +45,6 @@ def env_route(key):
     dotenv_path = join(dirname("./.env"), '.env')
     load_dotenv(dotenv_path)
     weather_api_key = os.environ.get(key)
-    #print(f"Esta es mi clave secreta: {SECRET_KEY}")
     return weather_api_key
 
 

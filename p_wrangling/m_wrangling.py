@@ -103,15 +103,6 @@ def clean_weather(weather_df):  # To clean weather_df columns, to have more usef
     return weather_df
 
 
-def weather_info(weather_df):
-    # Function to get the forecast info of the day: Forecast, High temperature, Low temperature and rain probability
-    forecast = get_code(weather_df, weather_df.index[0], 'Forecast')
-    high_temp = get_code(weather_df, weather_df.index[0], 'High temperature (ºC)')
-    low_temp = get_code(weather_df, weather_df.index[0], 'Low temperature (ºC)')
-    prob_precipitation = get_code(weather_df, weather_df.index[0], 'Probability of precipitation (%)')
-    return forecast, high_temp, low_temp, prob_precipitation
-
-
 def get_flights_df_m1(flight_list, flight_cols):  # Return a dataframe with the information of all flights requested
     flight_df_raw = get_df(flight_list)
     flight_df_raw1 = split_column(flight_df_raw, 3, '(', 'Departure city', 'Departure code')
@@ -151,6 +142,7 @@ def hour_diff_calculate(arrival_h,departure_h):
     difference = departure_hour - arrival_hour
     hour_diff = difference.total_seconds() / 60**2
     return hour_diff
+
 
 def weather_info(date, weather_df):  # Collect weather info of the flight date in arrival city
     date_weather = date_for_weather(date)
