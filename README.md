@@ -80,8 +80,9 @@ Then go to your local URL provided and you will see the tool interface, where yo
 ## **Folder structure**
 ```
 └── Destiny-tips-tool
-    ├── .gitignore
     ├── README.md
+    ├── .gitignore
+    ├── .env
     ├── main_script.py
     ├── p_acquisition
     │   ├── __init__.py
@@ -93,8 +94,10 @@ Then go to your local URL provided and you will see the tool interface, where yo
     │   ├── __init__.py
     │   └── m_analysis.py
     ├── notebooks
-    │   ├── Diamonds_kaggle_17.ipynb
-    │   └── diamonds_prediction_17.csv
+    │   ├── Jobs_Flight_&_Airports.ipynb
+    │   ├── Jobs_Currency.ipynb
+    │   ├── Jobs_Hour.ipynb
+    │   └── Jobs_Weather.ipynb
     └── data
         ├── world-airports-extended.csv
         ├── world-airports.csv
@@ -102,6 +105,13 @@ Then go to your local URL provided and you will see the tool interface, where yo
         └── country-codes_csv.csv
 ``` 
 
-:airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: 
+### **To Do**
+
+Some improvements will be considered in the future:
+
+- Add the option of a connection flight.
+- Include results of other information that could be useful for the traveler, as taxi companies in arrival town or official language of the city.
+
+:airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: 
 
 

@@ -2,21 +2,19 @@
 
 import pandas as pd
 import quandl
-import re
-from sqlalchemy import create_engine
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 
 
 # Constants
 
 airports_cols = ['Airport_ID', 'Name', 'City', 'Country', 'IATA', 'ICAO', 'Latitude', 'Longitude', 'Altitude',
                  'Timezone', 'DST', 'Tz database timezone', 'Type', 'Source']
-aed_flight = 'http://aviation-edge.com/v2/public/flights?key=25034e-9edde7&flightIata='
 
 # Functions
 
@@ -39,7 +37,9 @@ def setup_quandl(api_key):  # Function to apply API key
 
 
 def get_driver(route):  # Function to get selenium driver
-    driver = webdriver.Chrome(route)
+    chrome_options = Options()
+    chrome_options.add_argument("--headless")
+    driver = webdriver.Chrome(route, options=chrome_options)
     return driver
 
 
@@ -135,8 +135,14 @@ def get_flight_info(route, web, flight_code):
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "tt-dataset-aircraftList")))
     flight_selection = find_by_class(driver, 'tt-dataset-aircraftList')
     flight_selection.click()
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'tbody')))
-    table = driver.find_element_by_css_selector('tbody')
+    try:
+        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'tbody')))
+    except:
+        print("The flight code does not exist, please try again.")
+        exit()
+    else:
+        table = driver.find_element_by_css_selector('tbody')
+
     rows = table.find_elements_by_class_name('data-row')
     flight_raw = []
     for row in rows:
@@ -149,29 +155,6 @@ def get_flight_info(route, web, flight_code):
 def get_airports_info(path_airports):
     airports_df = get_df_from_csv(path_airports)
     return airports_df
-
-
-def get_weather_df(route, web, country_name, airport_name, weather_cols):  # Can get weather information from an airport
-    driver = get_driver(route)
-    get_web(driver, web)
-    click_button(driver, "btn.btn-primary.btn-sm.acceptcookies")
-    select_dropdown(driver, 'Country', country_name)
-    select_dropdown(driver, 'Places', airport_name)
-    click_button(driver, "btn.btn-default.btn-sm")
-    table = driver.find_element_by_class_name('panel.panel-primary.article')
-    rows = table.find_elements_by_tag_name('table')
-    weather_raw = []
-    for row in rows:
-        cells = row.find_elements_by_tag_name('td')
-        weather_raw.append(cells[1].text)
-    weather_raw_list = [[x] for x in weather_raw]
-    weather_raw_divided = [re.split('[,.]', y) for x in weather_raw_list for y in x]
-    ordered_weather = []
-    for x in weather_raw_divided:
-        sublist = reorder_func(x)
-        ordered_weather.append(sublist)
-    weather_df = pd.DataFrame(ordered_weather, columns=weather_cols)
-    return weather_df
 
 
 def get_currency_change(route, web, departure_curr_code, arrival_curr_code):  # Returns currency info
@@ -189,6 +172,7 @@ def get_currency_change(route, web, departure_curr_code, arrival_curr_code):  # 
     WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "unit-rates___StyledDiv-sc-1dk593y-0.dEqdnx")))
     rule = find_by_class(driver, "unit-rates___StyledDiv-sc-1dk593y-0.dEqdnx")
     return rule.text
+
 
 def get_tz_dif(route, web, departure_timezone, arrival_timezone):
     driver = get_driver(route)

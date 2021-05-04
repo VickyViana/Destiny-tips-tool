@@ -94,6 +94,11 @@ def transform_hour(hour):
     return hour_trf
 
 
+def flight_serie(flight_df, date):
+    flight_info = get_row(flight_df, 'Date', date)
+    return flight_info
+
+
 def clean_weather(weather_df):  # To clean weather_df columns, to have more useful values
     weather_df['Forecast'] = apply_in_column(weather_df, 'Forecast', not_day)
     weather_df['High temperature (ºC)'] = apply_in_column(weather_df, 'High temperature (ºC)', only_num)
@@ -124,6 +129,22 @@ def get_flights_df_m2(flight_list, flight_cols2, flight_cols_final):  # Return a
     flight_df_raw4 = strip_str_col(flight_df_raw3, 'Arrival code', ')')
     flights_df = flight_df_raw4[flight_cols_final]
     return flights_df
+
+
+def flight_mode_selector(flight_list, flight_cols, flight_cols2):
+    # Selection of the transformation needed to flight_list
+    if flight_list[0] == "":
+        flight_df = get_flights_df_m1(flight_list, flight_cols2)
+    else:
+        flight_df = get_flights_df_m2(flight_list, flight_cols2, flight_cols)
+    return flight_df
+
+
+def get_flights_df(driver_route, flight_web, flight_code, flight_cols, flight_cols2, date_flight):
+    flight_list = get_flight_info(driver_route, flight_web, flight_code)
+    flights_table = flight_mode_selector(flight_list, flight_cols, flight_cols2)
+    flight_df = flight_serie(flights_table, date_flight)
+    return flight_df
 
 
 def currency_info(currency_table_route, departure_country, arrival_country):  # Returns currency info
