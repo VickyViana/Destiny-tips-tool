@@ -77,16 +77,22 @@ def click_enter(driver):  # Click the key Enter when needed
     return click
 
 
+def click_down(driver):  # Click the key Enter when needed
+    click = driver.send_keys(Keys.DOWN)
+    return click
+
+
 def get_flight_info(route, web, flight_code):
-    # Returns a df taken from the web with all the flights availables with the flight code entered
+    # Returns a df taken from the web with all the flights available with the flight code entered
     driver = get_driver(route)
     get_web(driver, web)
     click_button(driver, "btn.btn-blue")
     flight_box = find_by_id(driver, 'searchFlight')
     fill_box(flight_box, flight_code)
     WebDriverWait(driver, 10).until(ec.element_to_be_clickable((By.CLASS_NAME, "tt-dataset-aircraftList")))
-    flight_selection = find_by_class(driver, 'tt-dataset-aircraftList')
-    flight_selection.click()
+    flight_selection = find_by_class(driver, "form-control.typeahead.tt-input.not-empty")
+    click_down(flight_selection)
+    click_enter(flight_selection)
     try:
         WebDriverWait(driver, 10).until(ec.element_to_be_clickable((By.CSS_SELECTOR, 'tbody')))
     except:
