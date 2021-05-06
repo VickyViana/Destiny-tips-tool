@@ -6,7 +6,7 @@ import requests
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support import expected_conditions as ec
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 
@@ -17,14 +17,6 @@ airports_cols = ['Airport_ID', 'Name', 'City', 'Country', 'IATA', 'ICAO', 'Latit
                  'Timezone', 'DST', 'Tz database timezone', 'Type', 'Source']
 
 # Functions
-
-
-def get_api_info_df(route,flight):  # Function to get flight information from API
-    url = (f'{route}{flight}')
-    html_flight = requests.get(url).json()
-    html_dic = html_flight[0]
-    api_df = pd.DataFrame.from_dict(html_dic)
-    return api_df
 
 
 def get_df_from_csv(path):  # Function to get airports dataset
@@ -75,75 +67,35 @@ def click_button_xpath(driver, xpath):  # To click a selected button
     return clicker
 
 
-def select_dropdown(driver, name_menu, name_search):  # To select an option in a drop-down menu
-    selection = driver.find_element_by_xpath("//select[@name=name_menu]/option[text()=name_search]").click()
-    return selection
-
-
-def fill_box(driver, text):
+def fill_box(driver, text):  # Fill a text box with the text provided
     filler = driver.send_keys(text)
     return filler
 
 
-def click_enter(driver):
+def click_enter(driver):  # Click the key Enter when needed
     click = driver.send_keys(Keys.ENTER)
     return click
 
 
-'''
-Function to order the data as we need and fill the empty data with 0. 
-This will help when the data will be introduce in a dataset 
-The data will be ordered as follows:
-1 - Forecast
-2 - High temperature
-3 - Low temperature
-4 - Probability of precipitation
-5 - Wind
-6 - Barometric pressure
-'''
-
-
-def reorder_func(day_weather_list):
-    reordered_weather = [day_weather_list[0], day_weather_list[1], day_weather_list[2]]
-    for i in range(2, len(day_weather_list)):
-        if 'precipitation' in day_weather_list[i]:
-            reordered_weather.append(day_weather_list[i])
-    if len(reordered_weather)< 4:
-        reordered_weather.append('0')
-
-    for i in range(2, len(day_weather_list)):
-        if 'wind' in day_weather_list[i]:
-            reordered_weather.append(day_weather_list[i])
-    if len(reordered_weather)< 5:
-        reordered_weather.append('0')
-
-    for i in range(2, len(day_weather_list)):
-        if 'pressure' in day_weather_list[i]:
-            reordered_weather.append(day_weather_list[i])
-    if len(reordered_weather)< 6:
-        reordered_weather.append('0')
-
-    return reordered_weather
-
-
 def get_flight_info(route, web, flight_code):
+    # Returns a df taken from the web with all the flights availables with the flight code entered
     driver = get_driver(route)
     get_web(driver, web)
     click_button(driver, "btn.btn-blue")
     flight_box = find_by_id(driver, 'searchFlight')
     fill_box(flight_box, flight_code)
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "tt-dataset-aircraftList")))
+    WebDriverWait(driver, 10).until(ec.element_to_be_clickable((By.CLASS_NAME, "tt-dataset-aircraftList")))
     flight_selection = find_by_class(driver, 'tt-dataset-aircraftList')
     flight_selection.click()
     try:
-        WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CSS_SELECTOR, 'tbody')))
+        WebDriverWait(driver, 10).until(ec.element_to_be_clickable((By.CSS_SELECTOR, 'tbody')))
     except:
         print("The flight code does not exist, please try again.")
         exit()
     else:
-        table = driver.find_element_by_css_selector('tbody')
+        table_f = driver.find_element_by_css_selector('tbody')
 
-    rows = table.find_elements_by_class_name('data-row')
+    rows = table_f.find_elements_by_class_name('data-row')
     flight_raw = []
     for row in rows:
         cells = row.find_elements_by_tag_name('td')
@@ -152,7 +104,7 @@ def get_flight_info(route, web, flight_code):
     return flight_raw
 
 
-def get_airports_info(path_airports):
+def get_airports_info(path_airports):  # Read the airports dataframe
     airports_df = get_df_from_csv(path_airports)
     return airports_df
 
@@ -161,7 +113,7 @@ def get_currency_change(route, web, departure_curr_code, arrival_curr_code):  # 
     driver = get_driver(route)
     get_web(driver, web)
     click_button_xpath(driver, "//button[@class='button__BaseButton-sc-1qpsalo-0 ctapkr']")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "midmarketFromCurrency")))
+    WebDriverWait(driver, 10).until(ec.element_to_be_clickable((By.ID, "midmarketFromCurrency")))
     first_box = find_by_id(driver, 'midmarketFromCurrency')
     fill_box(first_box, departure_curr_code)
     click_enter(first_box)
@@ -169,12 +121,12 @@ def get_currency_change(route, web, departure_curr_code, arrival_curr_code):  # 
     fill_box(second_box, arrival_curr_code)
     click_enter(second_box)
     click_button_xpath(driver, "//button[@type='submit']")
-    WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.CLASS_NAME, "unit-rates___StyledDiv-sc-1dk593y-0.dEqdnx")))
+    WebDriverWait(driver, 10).until(ec.element_to_be_clickable((By.CLASS_NAME, "unit-rates___StyledDiv-sc-1dk593y-0.dEqdnx")))
     rule = find_by_class(driver, "unit-rates___StyledDiv-sc-1dk593y-0.dEqdnx")
     return rule.text
 
 
-def get_tz_dif(route, web, departure_timezone, arrival_timezone):
+def get_tz_dif(route, web, departure_timezone, arrival_timezone):  # Returns city hours from time zones web
     driver = get_driver(route)
     get_web(driver, web)
     departure_box = find_by_id(driver, 'loc1')
@@ -191,6 +143,7 @@ def get_tz_dif(route, web, departure_timezone, arrival_timezone):
 
 
 def get_api_weather(arrival_city, arrival_country_code, api_weather_key):
+    # Returns df with 16 days forecast from weather web
     url = f'https://api.weatherbit.io/v2.0/forecast/daily?city={arrival_city}&country={arrival_country_code}&key={api_weather_key}'
     html_weather = requests.get(url).json()
     html_dic = html_weather['data']

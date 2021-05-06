@@ -1,5 +1,5 @@
 # IMPORTS
-from p_acquisition.m_acquisition import *
+
 from p_wrangling.m_wrangling import *
 from datetime import datetime
 from datetime import timedelta
@@ -7,13 +7,13 @@ from datetime import timedelta
 # FUNCTIONS
 
 
-def add_1_day(date):
+def add_1_day(date):  # To transform date in datetime format an add 1 day
     date_changed = datetime.strptime(date, "%d %b %Y")
     new_date = date_changed + timedelta(days=1)
     return new_date
 
 
-def get_imp_flight_values(flight_info):
+def get_imp_flight_values(flight_info):  # Returns departure and arrival codes from flight df info
     try:
         departure_code = get_value(flight_info, 'Departure code')
     except:
@@ -28,7 +28,7 @@ def get_imp_flight_values(flight_info):
     return departure_code, arrival_code
 
 
-def get_imp_airports_values(arrival_airport_df, departure_airport_df):
+def get_imp_airports_values(arrival_airport_df, departure_airport_df):  # Returns all data needed from airports df
     arrival_city = get_value(arrival_airport_df, 'municipality')
     arrival_country = get_value(arrival_airport_df, 'country_name')
     departure_country = get_value(departure_airport_df, 'country_name')
@@ -44,6 +44,7 @@ def get_imp_airports_values(arrival_airport_df, departure_airport_df):
 
 
 def flight_connection_df(flight1_code, date_flight, flight2_code, driver_route, flight_web, flight_cols, flight_cols2):
+    #  Returns flight df with one or tw rows, depending if there are one or two flight codes
     flight1_df = get_flights_df(driver_route, flight_web, flight1_code, flight_cols, flight_cols2, date_flight)
     if flight2_code != None:
         flight2_df = get_flights_df(driver_route, flight_web, flight2_code, flight_cols, flight_cols2, date_flight)
@@ -58,13 +59,13 @@ def flight_connection_df(flight1_code, date_flight, flight2_code, driver_route, 
     return flight_df
 
 
-def get_airports_dfs(airports_df, departure_code, arrival_code):
+def get_airports_dfs(airports_df, departure_code, arrival_code):  # Returns dfs for departure and arrival airports
     departure_airport_df = get_row(airports_df, 'iata_code', departure_code)
     arrival_airport_df = get_row(airports_df, 'iata_code', arrival_code)
     return departure_airport_df, arrival_airport_df
 
 
-def print_destiny(city_name, country_name):
+def print_destiny(city_name, country_name):  # Print destination tip
     destiny = f'You are travelling to {city_name}, in {country_name}.'
     return destiny
 
@@ -82,6 +83,7 @@ def get_weather_day(weather_df, day_row):
 
 
 def print_currency(departure_curr_code, arrival_curr_code, arrival_city, departure_country, arrival_country, arrival_curr_name, rule):
+    # Print currency tip
     if len(arrival_curr_code) != 3:
         error_message = 'No currency data available for the arrival country'
         return error_message
@@ -97,17 +99,18 @@ def print_currency(departure_curr_code, arrival_curr_code, arrival_city, departu
         return curr_solution3
 
 
-def print_hour_diff(hour_diff):
+def print_hour_diff(hour_diff):  # Print hour tip
     if hour_diff == 'No':
-        return 'There is no time data available for your trip'
+        return 'There is no time data available for your trip.'
     elif hour_diff == 0:
         return 'There is no time difference.'
+    elif hour_diff < 0:
+        return f'There is a time difference of {hour_diff} hours. You have to set the clock back.'
     else:
-        return f'There is a time difference of {hour_diff} hours.'
+        return f'There is a time difference of +{hour_diff} hours. You have to set the clock forward.'
 
 
-
-def print_weather(temp, max_temp, min_temp, rain, snow, humidity, clouds):
+def print_weather(temp, max_temp, min_temp, rain, snow, humidity, clouds):  # Print weather tip
     temperatures = f'There will be an average temperature of {temp} ºC, with {max_temp} ºC of maximum and {min_temp} ºC of minimum.'
     humid = f'There will be a humidity of {humidity}%.'
     if clouds < 20:

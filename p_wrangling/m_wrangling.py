@@ -1,9 +1,7 @@
 # IMPORTS
 
-import re
 from p_acquisition.m_acquisition import *
 from datetime import datetime
-from datetime import date
 
 # FUNCTIONS
 
@@ -20,12 +18,12 @@ def date_for_weather(date):  # Puts the date in format readable by weather_df
     return weather_date
 
 
-def make_sublist(list_raw, n_components):  # Divide a list in a list of lists of n components
-    list_of_lists = [list_raw[x:x + n_components] for x in range(0, len(list_raw), n_components)]
-    return list_of_lists
+def get_df(list_of_lists):  # Return a dataframe from a list of lists given
+    df_raw = pd.DataFrame(list_of_lists)
+    return df_raw
 
 
-def get_df(list_of_lists, cols):  # Return a dataframe from a list of lists given
+def get_df_col(list_of_lists, cols):  # Return a dataframe from a list of lists given and columns names
     df_raw = pd.DataFrame(list_of_lists, columns=cols)
     return df_raw
 
@@ -46,18 +44,18 @@ def strip_str_col(data_df, column, to_remove):  # Clean elements of a column rem
     return data_df
 
 
-def get_code(table_df, row, column):
+def get_code(table_df, row, column):  # Select a specific value from a table, considering the column and row given
     code_data = table_df.loc[row, column]
     return code_data
 
 
-def get_row(table_df, column, data_code):
+def get_row(table_df, column, data_code):  # Select a specific row from a table, considering the value in a column given
     row_wanted = table_df.loc[table_df[column] == data_code]
     return row_wanted
 
 
-def get_value(data_serie, column):
-    code = data_serie[column].values[0]
+def get_value(data_ser, column):  # Select a specific value from a table of one row, considering the column given
+    code = data_ser[column].values[0]
     return code
 
 
@@ -74,12 +72,7 @@ def not_day(text):  # Return a string deleting the last word
     return short_text
 
 
-def only_num(text):  # Return ony the numbers in a string
-    result = (re.findall('\d+', text))
-    return ''.join(result)
-
-
-def remove_empties(flight_list):
+def remove_empties(flight_list):  # Remove empty elements in a list
     flight_list_clean = [x for x in flight_list if x != ['']]
     return flight_list_clean
 
@@ -89,23 +82,14 @@ def apply_in_column(table_df, column, fun_to_apply):  # Apply a function to a da
     return table_df[column]
 
 
-def transform_hour(hour):
+def transform_hour(hour):  # Transform string hour in datetime format
     hour_trf = datetime.strptime(hour, "%m/%d/%Y %I:%M %p")
     return hour_trf
 
 
-def flight_serie(flight_df, date):
+def flight_serie(flight_df, date):  # Returns a df with only the row of the date requested
     flight_info = get_row(flight_df, 'Date', date)
     return flight_info
-
-
-def clean_weather(weather_df):  # To clean weather_df columns, to have more useful values
-    weather_df['Forecast'] = apply_in_column(weather_df, 'Forecast', not_day)
-    weather_df['High temperature (ºC)'] = apply_in_column(weather_df, 'High temperature (ºC)', only_num)
-    weather_df['Low temperature (ºC)'] = apply_in_column(weather_df, 'Low temperature (ºC)', only_num)
-    weather_df['Probability of precipitation (%)'] = apply_in_column(weather_df, 'Probability of precipitation (%)', only_num)
-    weather_df['Barometric pressure (mb)'] = apply_in_column(weather_df, 'Barometric pressure (mb)', only_num)
-    return weather_df
 
 
 def get_flights_df_m1(flight_list, flight_cols):  # Return a dataframe with the information of all flights requested
@@ -119,10 +103,11 @@ def get_flights_df_m1(flight_list, flight_cols):  # Return a dataframe with the 
     return flights_df
 
 
-def get_flights_df_m2(flight_list, flight_cols2, flight_cols_final):  # Return a dataframe with the information of all flights requested
+def get_flights_df_m2(flight_list, flight_cols2, flight_cols_final):
+    # Return a dataframe with the information of all flights requested
     flight_list_split = split_n(flight_list)
     flight_list_clean = remove_empties(flight_list_split)
-    flight_df_raw = get_df(flight_list_clean, flight_cols2)
+    flight_df_raw = get_df_col(flight_list_clean, flight_cols2)
     flight_df_raw1 = split_column(flight_df_raw, 'Departure', '(', 'Departure city', 'Departure code')
     flight_df_raw2 = split_column(flight_df_raw1, 'Arrival', '(', 'Arrival city', 'Arrival code')
     flight_df_raw3 = strip_str_col(flight_df_raw2, 'Departure code', ')')
@@ -132,7 +117,7 @@ def get_flights_df_m2(flight_list, flight_cols2, flight_cols_final):  # Return a
 
 
 def flight_mode_selector(flight_list, flight_cols, flight_cols2):
-    # Selection of the transformation needed to flight_list
+    # Select how to clean the flight list depending on how it start
     if flight_list[0] == "":
         flight_df = get_flights_df_m1(flight_list, flight_cols2)
     else:
@@ -141,13 +126,15 @@ def flight_mode_selector(flight_list, flight_cols, flight_cols2):
 
 
 def get_flights_df(driver_route, flight_web, flight_code, flight_cols, flight_cols2, date_flight):
+    # Returns the df with the flight information requested
     flight_list = get_flight_info(driver_route, flight_web, flight_code)
     flights_table = flight_mode_selector(flight_list, flight_cols, flight_cols2)
     flight_df = flight_serie(flights_table, date_flight)
     return flight_df
 
 
-def currency_info(currency_table_route, departure_country, arrival_country):  # Returns currency info
+def currency_info(currency_table_route, departure_country, arrival_country):
+    # Returns currency info of the country requested
     currency_df = get_df_from_csv(currency_table_route)
     departure_curr_df = get_row(currency_df, 'ENTITY', departure_country)
     departure_curr_code = get_value(departure_curr_df, 'Alphabetic Code')
@@ -158,6 +145,7 @@ def currency_info(currency_table_route, departure_country, arrival_country):  # 
 
 
 def hour_diff_calculate(route, web, departure_timezone, arrival_timezone):
+    # Returns the hour difference between the two zones entered
     if (departure_timezone == 0) | (arrival_timezone == 0):
         hour_diff = 'No'
     else:
