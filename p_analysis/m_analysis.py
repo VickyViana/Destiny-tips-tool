@@ -51,7 +51,7 @@ def flight_connection_df(flight1_code, date_flight, flight2_code, driver_route, 
             date_tomorrow = add_1_day(date_flight)
             new_date = date_tomorrow.strftime("%d %b %Y")
             flight2_df = get_flights_df(driver_route, flight_web, flight1_code, flight_cols, flight_cols2, new_date)
-            flight_df = flight1_df.append(flight2_df)
+        flight_df = flight1_df.append(flight2_df)
     else:
         flight_df = flight1_df
 
@@ -98,10 +98,13 @@ def print_currency(departure_curr_code, arrival_curr_code, arrival_city, departu
 
 
 def print_hour_diff(hour_diff):
-    if hour_diff == 0:
+    if hour_diff == 'No':
+        return 'There is no time data available for your trip'
+    elif hour_diff == 0:
         return 'There is no time difference.'
     else:
         return f'There is a time difference of {hour_diff} hours.'
+
 
 
 def print_weather(temp, max_temp, min_temp, rain, snow, humidity, clouds):

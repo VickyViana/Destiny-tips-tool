@@ -2,14 +2,15 @@
 Ironhack Madrid - Data Analytics Part Time - March 2021 - Final proyect
 
 
-This proyect is based on the creation of a tool that provides useful information about the destination of a flight. Once you introduce the number of flight and the date, the pipline code will collect the information required from different sources (datasets, APIs, web scraping...), and return the specific 
-The participation in the kaggle competition 'dapt202011mad - Predict diamond prices!' requires to create a machine learning model that could predict the price of diamonds depending on their properties. The model that gets the most accurate results will be the winner.
+This proyect is based on the creation of a tool that provides useful information about the destination of a flight. Once you introduce the number of flight and the date, the pipline code will collect the information required from different sources (datasets, APIs, web scraping...), and return some tips about the weather, currency and time zone difference of the specific arrival city. 
 
-In this repository it will be explained how the model is designed step by step.
+In this repository it will be explained how the tool has been built and how to run it.
 
 <p align="center"><img src="https://s.abcnews.com/images/Lifestyle/GTY_airport_travel_jt_160612_16x9_992.jpg"></p>
 
 ## **Data sources** 
+
+The sources where all the data have been taken are the following:
 
 - Flightradar24 web scrap: in this web, when the flight code is introduced, we can get the city and country of arrival (https://www.flightradar24.com/data/flights)
 
@@ -31,32 +32,28 @@ In this repository it will be explained how the model is designed step by step.
 When the program is run with the values of flight code and date inputed, four types of information are shown:
 - Destination: the city and country of arrival.
 - Currency: the local currency and the actual exchange compared with departure city.
-- Time difference: the hours of difference between the departure ande arrival cities.
+- Time difference: the hours of difference between the departure and arrival cities.
 - Weather forecast: information about different features of the weather in the arrival city, including temperature (media, maximum and minimum), clouds, rain, snow and humidity.
 
 
 
 ## **How it works** 
 
-**First step**: The input data (flight code and date) are introduced by web scraping in "Flightradar24", where the information of the specific flight is obtainded. This information is stored in a dataframe called "flight". From here we will use the values of the arrival city (arrival_city), the departure airport code (departure_code) and the arrival airport code (arrival_code).
-**Second step**: The airports codes previously obtained are searched in the word-airports-extended.csv dataset, extracting a dataframe for each airport (departure and arrival). In these dataframes are included useful values as the country, the time zone, the currency name and the currency ISO code.
-**Third step**: The currrency codes are inputed in XE web to obtain the rule of 
-- Columns 'cut', 'color' and 'clarity' are considered as categorical columns. Column 'price' will be the target of the model. A preprocessing transformer is applied to them implementing a SimpleImputer for the missing values (introducing the constant "missing") and encoding the strings to integers with OrdinalEncoder.
+**Step One**: The input data (flight code and date) are introduced by web scraping in "Flightradar24", where the information of the specific flight is obtainded. This information is stored in a dataframe called "flight". From here we will take the values of the departure airport code (departure_code) and the arrival airport code (arrival_code). In case there is a stopover flight, in the dataframe flight will be added a row with tis flight data, and the arrival airport code will be taken from here.
 
-Both preprocessing transformers are join in one ColumnTransformer, called preprocessor.
-The model is defined with a pipeline, using the previous explained preprocessor and a regressor, that in this case the chosen one has been LGBMRegressor, that seems to provide the best results.
+**Step Two**: The airports codes previously obtained are searched in the word-airports-extended.csv dataset, extracting a dataframe for each airport (departure and arrival). In these dataframes are included useful values as the arrival city and country names, the ISO country code, the time zone, the currency name and the currency ISO code.
 
-After consider this transformation to the columns and define the prediction model, the dataset is split in train part and test part, and these parts are used to train the model. 
+**Step Three**: By selenium web scraping, the currrency codes are inputed in XE web to obtain the rule of exchange between the currencies of each country.
 
-The following step is to check how good is the model. The first check is done with mean_squared_error, and the following results are obtained:
-- test error: 551.94
-- train error: 475.51
-These are not bad results as both values are prety near to 0.
+**Step Four**: By selenium web scraping, the time zones of each city are entered in the web Pokerala, returning the actual hour for each. These hours are transformed into a suitable format (using datetime library) and substacted to obtain time difference.
 
-A second check with cross validation (from sklearn) is performed, considering as scoring 'neg_root_mean_squared_error' The mean of the scores obtained is 537.39, an acceptable score.
+**Step Five**: For this step is used the API of Weatherbit, including in the url call the name of the arrival city and the country code. From here we obtain a dataframe with the information of 16 days from now. Searching the flight date.
+
+**Step Six**: Print the results obtained in previous steps, including the data in different statements depending on their value.
 
 
-##**Running methods**
+
+## **Running methods**
 
 The tool could be run by two methods:
 - On console: running the file "main_script_2.py" and inputting the flight code ande date as follows:
@@ -66,7 +63,6 @@ The tool could be run by two methods:
 $ streamlit run main_script.py
 
 Then go to your local URL provided and you will see the tool interface, where you could input the flight data and see the resultant tips.
-
 
 
 
@@ -84,6 +80,7 @@ Then go to your local URL provided and you will see the tool interface, where yo
     ├── .gitignore
     ├── .env
     ├── main_script.py
+    ├── main_script_2.py
     ├── p_acquisition
     │   ├── __init__.py
     │   └── m_acquisition.py
@@ -109,7 +106,8 @@ Then go to your local URL provided and you will see the tool interface, where yo
 
 Some improvements will be considered in the future:
 
-- Add the option of a connection flight.
+- Improve the speed of running using paralelization of precesses.
+- Add the option of more than one stopover flight.
 - Include results of other information that could be useful for the traveler, as taxi companies in arrival town or official language of the city.
 
 :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: :airplane: 

@@ -1,6 +1,5 @@
 # IMPORTS
 
-import pandas as pd
 import re
 from p_acquisition.m_acquisition import *
 from datetime import datetime
@@ -31,7 +30,8 @@ def get_df(list_of_lists, cols):  # Return a dataframe from a list of lists give
     return df_raw
 
 
-def split_column(data_df, init_col, sep, first_col, sec_col):  # Split a column in two by a separator, and add the new columns to the dataframe
+def split_column(data_df, init_col, sep, first_col, sec_col):
+    # Split a column in two by a separator, and add the new columns to the dataframe
     data_df[[first_col, sec_col]] = data_df[init_col].str.split(sep, expand=True)
     return data_df
 
@@ -157,11 +157,15 @@ def currency_info(currency_table_route, departure_country, arrival_country):  # 
     return departure_curr_code, arrival_curr_code, arrival_curr_name
 
 
-def hour_diff_calculate(arrival_h,departure_h):
-    departure_hour = transform_hour(departure_h)
-    arrival_hour = transform_hour(arrival_h)
-    difference = departure_hour - arrival_hour
-    hour_diff = difference.total_seconds() / 60**2
+def hour_diff_calculate(route, web, departure_timezone, arrival_timezone):
+    if (departure_timezone == 0) | (arrival_timezone == 0):
+        hour_diff = 'No'
+    else:
+        departure_h, arrival_h = get_tz_dif(route, web, departure_timezone, arrival_timezone)
+        departure_hour = transform_hour(departure_h)
+        arrival_hour = transform_hour(arrival_h)
+        difference = departure_hour - arrival_hour
+        hour_diff = difference.total_seconds() / 60**2
     return hour_diff
 
 
