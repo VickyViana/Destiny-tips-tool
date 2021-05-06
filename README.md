@@ -79,6 +79,7 @@ Then go to your local URL provided and you will see the tool interface, where yo
     ├── README.md
     ├── .gitignore
     ├── .env
+    ├── requirements.txt
     ├── main_script.py
     ├── main_script_2.py
     ├── p_acquisition
