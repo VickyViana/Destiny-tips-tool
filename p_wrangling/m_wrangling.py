@@ -152,7 +152,7 @@ def hour_diff_calculate(route, web, departure_timezone, arrival_timezone):
         departure_h, arrival_h = get_tz_dif(route, web, departure_timezone, arrival_timezone)
         departure_hour = transform_hour(departure_h)
         arrival_hour = transform_hour(arrival_h)
-        difference = departure_hour - arrival_hour
+        difference = arrival_hour - departure_hour
         hour_diff = difference.total_seconds() / 60**2
     return hour_diff
 
@@ -168,14 +168,4 @@ def weather_info(date, weather_df):  # Collect weather info of the flight date i
     humidity = get_value(weather_day_df, 'rh')
     clouds = get_value(weather_day_df, 'clouds')
     return temp, max_temp, min_temp, rain, snow, humidity, clouds
-
-
-
-
-
-
-
-
-
-
 
