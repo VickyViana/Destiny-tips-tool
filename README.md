@@ -12,28 +12,28 @@ In this repository it will be explained how the tool has been built and how to r
 
 The sources where all the data have been taken are the following:
 
-- **Flightradar24 web scrap**: in this web, when the flight code is introduced, we can get the city and country of arrival (https://www.flightradar24.com/data/flights)
+- **Flightradar24 web scrap**: in this web, when the flight code is introduced, we can get the city and country of arrival [Flightradar24](https://www.flightradar24.com/data/flights)
 
 - **World-airports-extended.csv dataset**: this dataset has been created from the merged of three primary datasets, in order to simplify the process. It is included in the "data" folder. The original datasets are:
-	- world_airports.csv: downloaded from Ourairports (https://ourairports.com/data/)
-	- airports-extended.csv: downloaded from Openfligts (https://openflights.org/data.html). Column "Tz database time zone" is taken from here.
-	- country-codes.csv: downloaded from Datahub (https://datahub.io/core/country-codes). We extract columns "ISO4217-currency_alphabetic_code" and "ISO4217-currency_name" from here.
+	- world_airports.csv: downloaded from Ourairports(https://ourairports.com/data/)
+	- airports-extended.csv: downloaded from Openfligts(https://openflights.org/data.html). Column "Tz database time zone" is taken from here.
+	- country-codes.csv: downloaded from Datahub(https://datahub.io/core/country-codes). We extract columns "ISO4217-currency_alphabetic_code" and "ISO4217-currency_name" from here.
 
-- **XE web scrap**: this web is a currency converter that works introducing the ISO code of the countries [Link](https://www.xe.com/es/currencyconverter/)
+- **XE web scrap**: this web is a currency converter that works introducing the ISO code of the countries [XE](https://www.xe.com/es/currencyconverter/)
 
-- **Prokerala web scrap**: This web displays the current hour in two countries according to the timezones inputted [Link](https://www.prokerala.com/travel/timezones/time-converter.php)
+- **Prokerala web scrap**: This web displays the current hour in two countries according to the timezones inputted [Prokerala](https://www.prokerala.com/travel/timezones/time-converter.php)
 
-- **Weatherbit 16 Day Weather Forecast API**: this API provides all the information of the weather in the city requested. You can get an API key by free subscription. [Link](https://www.weatherbit.io/api/weather-forecast-16-day)
+- **Weatherbit 16 Day Weather Forecast API**: this API provides all the information of the weather in the city requested. You can get an API key by free subscription. [Weatherbit](https://www.weatherbit.io/api/weather-forecast-16-day)
 	
 
 
 ## **Tips provided** 
 
 When the program is run with the values of flight code and date inputted, four types of information are shown:
-- Destination: the city and country of arrival.
-- Currency: the local currency and the actual exchange compared with the departure city.
-- Time difference: the hours of difference between the departure and arrival cities.
-- Weather forecast: information about different features of the weather in the arrival city, including temperature (media, maximum and minimum), clouds, rain, snow and humidity.
+- <ins>Destination</ins>: the city and country of arrival.
+- <ins>Currency</ins>: the local currency and the actual exchange compared with the departure city.
+- <ins>Time difference</ins>: the hours of difference between the departure and arrival cities.
+- <ins>Weather forecast</ins>: information about different features of the weather in the arrival city, including temperature (media, maximum and minimum), clouds, rain, snow and humidity.
 
 
 
@@ -56,10 +56,10 @@ When the program is run with the values of flight code and date inputted, four t
 ## **Running methods**
 
 The tool could be run by two methods:
-- On console: running the file "main_script_2.py" and inputting the flight code and date as follows:
+- <ins>On console</ins>: running the file "main_script_2.py" and inputting the flight code and date as follows:
 
  $ python main_script_2.py -fc 'flight code' -d 'day number' -m 'month name' -y 'year number'
-- With Streamlit: running the file "main_script.py" as follows:
+- <ins>With Streamlit</ins>: running the file "main_script.py" as follows:
 $ streamlit run main_script.py
 
 Then go to your local URL provided and you will see the tool interface, where you could input the flight data and see the resultant tips.
