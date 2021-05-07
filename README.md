@@ -12,18 +12,18 @@ In this repository it will be explained how the tool has been built and how to r
 
 The sources where all the data have been taken are the following:
 
-- **Flightradar24 web scrap**: in this web, when the flight code is introduced, we can get the city and country of arrival [Flightradar24](https://www.flightradar24.com/data/flights)
+- **Flightradar24 web scrap**: in this web, when the flight code is introduced, we can get the city and country of arrival. [(Flightradar24 Link)](https://www.flightradar24.com/data/flights)
 
 - **World-airports-extended.csv dataset**: this dataset has been created from the merged of three primary datasets, in order to simplify the process. It is included in the "data" folder. The original datasets are:
-	- world_airports.csv: downloaded from Ourairports(https://ourairports.com/data/)
-	- airports-extended.csv: downloaded from Openfligts(https://openflights.org/data.html). Column "Tz database time zone" is taken from here.
-	- country-codes.csv: downloaded from Datahub(https://datahub.io/core/country-codes). We extract columns "ISO4217-currency_alphabetic_code" and "ISO4217-currency_name" from here.
+	- world_airports.csv: downloaded from Ourairports [(Ourairports Link)](https://ourairports.com/data/).
+	- airports-extended.csv: downloaded from Openfligts [(Openfligts Link)](https://openflights.org/data.html). Column "Tz database time zone" is taken from here.
+	- country-codes.csv: downloaded from Datahub [(Datahub Link)](https://datahub.io/core/country-codes). We extract columns "ISO4217-currency_alphabetic_code" and "ISO4217-currency_name" from here.
 
-- **XE web scrap**: this web is a currency converter that works introducing the ISO code of the countries [XE](https://www.xe.com/es/currencyconverter/)
+- **XE web scrap**: this web is a currency converter that works introducing the ISO code of the countries [(XE Link)](https://www.xe.com/es/currencyconverter/).
 
-- **Prokerala web scrap**: This web displays the current hour in two countries according to the timezones inputted [Prokerala](https://www.prokerala.com/travel/timezones/time-converter.php)
+- **Prokerala web scrap**: This web displays the current hour in two countries according to the timezones inputted [(Prokerala Link)](https://www.prokerala.com/travel/timezones/time-converter.php).
 
-- **Weatherbit 16 Day Weather Forecast API**: this API provides all the information of the weather in the city requested. You can get an API key by free subscription. [Weatherbit](https://www.weatherbit.io/api/weather-forecast-16-day)
+- **Weatherbit 16 Day Weather Forecast API**: this API provides all the information of the weather in the city requested. You can get an API key by free subscription. [(Weatherbit Link)](https://www.weatherbit.io/api/weather-forecast-16-day).
 	
 
 
@@ -95,7 +95,8 @@ Then go to your local URL provided and you will see the tool interface, where yo
     │   ├── Jobs_Flight_&_Airports.ipynb
     │   ├── Jobs_Currency.ipynb
     │   ├── Jobs_Hour.ipynb
-    │   └── Jobs_Weather.ipynb
+    │   ├── Jobs_Weather.ipynb
+    │   └── Jobs_Airports_clean.ipynb
     └── data
         ├── world-airports-extended.csv
         ├── world-airports.csv
